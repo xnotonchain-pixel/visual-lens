@@ -1,0 +1,28 @@
+{
+  "overview": "Visual Lens is a feature-rich Google Lens-style visual recognition app powered by Venice AI. Capture or upload images (or video frames) to identify objects, plants, food, landmarks, text, and more across 9 specialized analysis modes. All your scans, collections, and settings are stored securely onchain.",
+  "features": [
+    "9 analysis modes: plant ID, food scanner, OCR, art & landmark, book/product lookup, language translation, receipt parser, medical reference, car & fashion",
+    "Camera capture, image upload, and video frame extraction",
+    "AI-powered web search results alongside every analysis",
+    "Scan history, saved collections, and side-by-side comparison",
+    "Public discovery feed with full filters and sorting",
+    "PDF export (single scan or bulk from history/collections)",
+    "AI tag suggestions when saving to collections",
+    "Comprehensive settings hub with onchain-persisted preferences",
+    "Privacy controls for public/private/unlisted scans",
+    "Quick-scan floating button and PWA homescreen shortcut"
+  ],
+  "category": "ai-tools",
+  "tags": [
+    "visual-recognition",
+    "ai",
+    "venice-ai",
+    "image-analysis",
+    "google-lens",
+    "ocr",
+    "plant-identification",
+    "onchain",
+    "internet-computer"
+  ],
+  "last_updated": "2026-04-19T02:05:24.138Z"
+}

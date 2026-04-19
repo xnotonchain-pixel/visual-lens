@@ -1,0 +1,237 @@
+type http_request_result = 
+ record {
+   body: blob;
+   headers: vec http_header;
+   status: nat;
+ };
+type http_header = 
+ record {
+   name: text;
+   value: text;
+ };
+type WebResult = 
+ record {
+   snippet: text;
+   title: text;
+   url: text;
+ };
+type VideoFrame = 
+ record {
+   analysisResult: opt AnalysisResult;
+   frameIndex: nat;
+   imageBase64: text;
+   processed: bool;
+   timestamp: float64;
+ };
+type VideoAnalysisJob = 
+ record {
+   analysisMode: AnalysisMode;
+   createdAt: Timestamp;
+   frameCount: nat;
+   frameInterval: nat;
+   frames: vec VideoFrame;
+   id: text;
+   ownerPrincipal: text;
+   status: variant {
+             completed;
+             failed;
+             pending;
+             processing;
+           };
+   videoName: text;
+ };
+type UserSettings = 
+ record {
+   autoSaveScans: bool;
+   collectionOrganizationMode: variant {
+                                 flat;
+                                 tagBased;
+                               };
+   defaultScanPrivacy: variant {
+                         onlyMe;
+                         open;
+                         unlisted;
+                       };
+   exportFormat: variant {
+                   csv;
+                   json;
+                   pdf;
+                 };
+   historyRetentionDays: opt nat;
+   language: text;
+   resultDetailLevel: variant {
+                        compact;
+                        detailed;
+                        standard;
+                      };
+   scanResultLayout: variant {
+                       compact;
+                       sideBySide;
+                       stacked;
+                     };
+   showConfidenceScores: bool;
+   tagAggressiveness: variant {
+                        aggressive;
+                        moderate;
+                        subtle;
+                      };
+   theme: variant {
+            auto;
+            dark;
+            light;
+          };
+   webSearchEnabled: bool;
+ };
+type TransformationOutput = 
+ record {
+   body: blob;
+   headers: vec http_header;
+   status: nat;
+ };
+type TransformationInput = 
+ record {
+   context: blob;
+   response: http_request_result;
+ };
+type Timestamp = int;
+type TagSuggestionRequest = 
+ record {
+   aggressiveness: variant {
+                     aggressive;
+                     moderate;
+                     subtle;
+                   };
+   analysisResult: AnalysisResult;
+   existingTags: vec text;
+   scanId: text;
+ };
+type TagSuggestion = 
+ record {
+   confidence: float64;
+   source: variant {
+             ai;
+             user;
+           };
+   tag: text;
+ };
+type ScanRecord = 
+ record {
+   analysisResult: AnalysisResult;
+   id: text;
+   imageBase64: text;
+   mimeType: text;
+   mode: AnalysisMode;
+   shareToken: opt text;
+   timestamp: Timestamp;
+   userId: principal;
+ };
+type DiscoveryScan = 
+ record {
+   analysisMode: AnalysisMode;
+   analysisResult: AnalysisResult;
+   createdAt: Timestamp;
+   id: text;
+   imageBase64: text;
+   likeCount: nat;
+   ownerPrincipal: text;
+   privacy: variant {
+              open;
+              unlisted;
+            };
+   scanId: text;
+   tags: vec text;
+   title: opt text;
+   viewCount: nat;
+ };
+type DiscoveryFilter = 
+ record {
+   keyword: opt text;
+   limit: nat;
+   mode: opt AnalysisMode;
+   offset: nat;
+   sortBy: variant {
+             mostLiked;
+             newest;
+             trending;
+           };
+ };
+type DetectedObject = 
+ record {
+   confidence: float64;
+   name: text;
+ };
+type Collection = 
+ record {
+   createdAt: Timestamp;
+   id: text;
+   name: text;
+   scanIds: vec text;
+   userId: principal;
+ };
+type AnalysisResult = 
+ record {
+   extractedText: text;
+   objects: vec DetectedObject;
+   sceneDescription: text;
+   webResults: vec WebResult;
+ };
+type AnalysisMode = 
+ variant {
+   artLandmark;
+   bookProduct;
+   carFashion;
+   food;
+   generic;
+   medicalReference;
+   plant;
+   receipt;
+   translation;
+ };
+service : {
+  addScanToCollection: (collectionId: text, scanId: text) -> ();
+  analyzeImage: (imageBase64: text, mimeType: text, mode:
+   opt AnalysisMode) -> (AnalysisResult);
+  createCollection: (name: text) -> (text);
+  createShareToken: (scanId: text) -> (text);
+  deleteCollection: (collectionId: text) -> ();
+  deleteScan: (scanId: text) -> ();
+  getCollection: (collectionId: text) -> (opt Collection) query;
+  getPublicDiscoveryFeed: (filter: DiscoveryFilter) -> (vec DiscoveryScan);
+  getScanHistory: () -> (vec ScanRecord) query;
+  getSharedScan: (token: text) -> (opt ScanRecord) query;
+  getUserCollections: () -> (vec Collection) query;
+  getUserSettings: () -> (opt UserSettings);
+  getUserVideoJobs: () -> (vec VideoAnalysisJob);
+  getVideoAnalysisJob: (jobId: text) -> (opt VideoAnalysisJob);
+  likeDiscoveryScan: (discoveryId: text) -> (variant {
+                                               err: text;
+                                               ok;
+                                             });
+  publishScanToDiscovery: (scanId: text, title: opt text, tags: vec text,
+   imageBase64: text, analysisMode: AnalysisMode, analysisResult:
+   AnalysisResult, privacy: variant {
+                              open;
+                              unlisted;
+                            }) -> (variant {
+                                     err: text;
+                                     ok: text;
+                                   });
+  removeFromCollection: (collectionId: text, scanId: text) -> ();
+  saveScan: (imageBase64: text, mimeType: text, mode: AnalysisMode,
+   analysisResult: AnalysisResult) -> (text);
+  saveScanToMyHistory: (sharedToken: text) -> (text);
+  saveUserSettings: (settings: UserSettings) -> ();
+  saveVideoAnalysisJob: (job: VideoAnalysisJob) -> (text);
+  suggestTags: (request: TagSuggestionRequest) -> (vec TagSuggestion);
+  transform: (input: TransformationInput) -> (TransformationOutput) query;
+  unpublishScanFromDiscovery: (discoveryId: text) ->
+   (variant {
+      err: text;
+      ok;
+    });
+  updateVideoFrameResult: (jobId: text, frameIndex: nat, result:
+   AnalysisResult) -> (variant {
+                         err: text;
+                         ok;
+                       });
+}

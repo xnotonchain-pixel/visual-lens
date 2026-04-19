@@ -1,0 +1,155 @@
+// Version: 1.0.0
+type AnalysisMode__1021465851 = AnalysisMode__73514170;
+type AnalysisMode__73514170 =
+  {
+    #artLandmark;
+    #bookProduct;
+    #carFashion;
+    #food;
+    #generic;
+    #medicalReference;
+    #plant;
+    #receipt;
+    #translation
+  };
+type AnalysisMode__793393205 = AnalysisMode__73514170;
+type AnalysisResult__1030028872 =
+  {
+    extractedText : Text;
+    objects : [DetectedObject__519436968];
+    sceneDescription : Text;
+    webResults : [WebResult__361448192]
+  };
+type AnalysisResult__576873501 = AnalysisResult__1030028872;
+type AnalysisResult__702932200 = AnalysisResult__1030028872;
+type AnalysisResult__889385443 = AnalysisResult__1030028872;
+type Collection__1060650749 = Collection__503771235;
+type Collection__503771235 =
+  {
+    createdAt : Timestamp__146892686;
+    id : Text;
+    name : Text;
+    scanIds : [Text];
+    userId : Principal
+  };
+type Data__791452850<K, V> =
+  {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type DetectedObject__519436968 = {confidence : Float; name : Text};
+type DiscoveryScan__194671380 = DiscoveryScan__806126032;
+type DiscoveryScan__806126032 =
+  {
+    analysisMode : AnalysisMode__793393205;
+    analysisResult : AnalysisResult__889385443;
+    createdAt : Timestamp__839351648;
+    id : Text;
+    imageBase64 : Text;
+    likeCount : Nat;
+    ownerPrincipal : Text;
+    privacy : {#open; #unlisted};
+    scanId : Text;
+    tags : [Text];
+    title : ?Text;
+    viewCount : Nat
+  };
+type Internal__8484328<K, V> =
+  {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
+type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type Node__46230540<K, V> =
+  {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type ScanRecord__592074079 =
+  {
+    analysisResult : AnalysisResult__702932200;
+    id : Text;
+    imageBase64 : Text;
+    mimeType : Text;
+    mode : AnalysisMode__73514170;
+    shareToken : ?Text;
+    timestamp : Timestamp__146892686;
+    userId : Principal
+  };
+type ScanRecord__74177112 = ScanRecord__592074079;
+type SharedScan__231562207 =
+  {createdAt : Timestamp__146892686; scanId : Text; token : Text};
+type SharedScan__823043711 = SharedScan__231562207;
+type Timestamp__146892686 = Timestamp__301639476;
+type Timestamp__301639476 = Int;
+type Timestamp__807515103 = Timestamp__301639476;
+type Timestamp__839351648 = Timestamp__301639476;
+type UserSettings__390566147 = UserSettings__451559232;
+type UserSettings__451559232 =
+  {
+    autoSaveScans : Bool;
+    collectionOrganizationMode : {#flat; #tagBased};
+    defaultScanPrivacy : {#onlyMe; #open; #unlisted};
+    exportFormat : {#csv; #json; #pdf};
+    historyRetentionDays : ?Nat;
+    language : Text;
+    resultDetailLevel : {#compact; #detailed; #standard};
+    scanResultLayout : {#compact; #sideBySide; #stacked};
+    showConfidenceScores : Bool;
+    tagAggressiveness : {#aggressive; #moderate; #subtle};
+    theme : {#auto; #dark; #light};
+    webSearchEnabled : Bool
+  };
+type VideoAnalysisJob__227927767 =
+  {
+    analysisMode : AnalysisMode__1021465851;
+    createdAt : Timestamp__807515103;
+    frameCount : Nat;
+    frameInterval : Nat;
+    frames : [VideoFrame__818106155];
+    id : Text;
+    ownerPrincipal : Text;
+    status : {#completed; #failed; #pending; #processing};
+    videoName : Text
+  };
+type VideoAnalysisJob__9610783 = VideoAnalysisJob__227927767;
+type VideoFrame__818106155 =
+  {
+    analysisResult : ?AnalysisResult__576873501;
+    frameIndex : Nat;
+    imageBase64 : Text;
+    processed : Bool;
+    timestamp : Float
+  };
+type WebResult__361448192 = {snippet : Text; title : Text; url : Text};
+actor {
+  stable collectionCounter : {var value : Nat};
+  stable collections :
+    {
+      var root : Node__46230540<Text, Collection__1060650749>;
+      var size : Nat__490723111
+    };
+  stable discoveryCounter : {var value : Nat};
+  stable discoveryLikes :
+    {var root : Node__46230540<Text, Bool>; var size : Nat__490723111};
+  stable discoveryScans :
+    {
+      var root : Node__46230540<Text, DiscoveryScan__194671380>;
+      var size : Nat__490723111
+    };
+  stable jobCounter : {var value : Nat};
+  stable scanCounter : {var value : Nat};
+  stable scans :
+    {
+      var root : Node__46230540<Text, ScanRecord__74177112>;
+      var size : Nat__490723111
+    };
+  stable shareTokens :
+    {
+      var root : Node__46230540<Text, SharedScan__823043711>;
+      var size : Nat__490723111
+    };
+  stable userSettings :
+    {
+      var root : Node__46230540<Principal, UserSettings__390566147>;
+      var size : Nat__490723111
+    };
+  stable videoJobs :
+    {
+      var root : Node__46230540<Text, VideoAnalysisJob__9610783>;
+      var size : Nat__490723111
+    }
+};

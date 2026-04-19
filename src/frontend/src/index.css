@@ -1,0 +1,469 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-display: "Bricolage Grotesque";
+    --font-body: "General Sans";
+    --font-mono: "Geist Mono";
+    --radius: 0.375rem;
+
+    /* Dark-by-default palette — cyan primary, amber highlights */
+    --background: 0.1 0.005 240;
+    --foreground: 0.93 0 0;
+    --card: 0.14 0.008 240;
+    --card-foreground: 0.92 0 0;
+    --popover: 0.18 0.006 240;
+    --popover-foreground: 0.93 0 0;
+
+    /* Cyan primary (hue ~195) */
+    --primary: 0.72 0.16 195;
+    --primary-foreground: 0.08 0 0;
+
+    /* Amber secondary (hue ~80) */
+    --secondary: 0.78 0.16 80;
+    --secondary-foreground: 0.08 0 0;
+
+    --muted: 0.2 0.006 240;
+    --muted-foreground: 0.55 0.01 240;
+
+    --accent: 0.72 0.16 195;
+    --accent-foreground: 0.08 0 0;
+
+    --destructive: 0.6 0.22 25;
+    --destructive-foreground: 0.95 0 0;
+
+    --border: 0.22 0.008 240;
+    --input: 0.18 0.008 240;
+    --ring: 0.72 0.16 195;
+
+    --chart-1: 0.72 0.16 195;
+    --chart-2: 0.78 0.16 80;
+    --chart-3: 0.6 0.2 25;
+    --chart-4: 0.72 0.16 320;
+    --chart-5: 0.65 0.16 150;
+
+    --sidebar: 0.14 0.008 240;
+    --sidebar-foreground: 0.93 0 0;
+    --sidebar-primary: 0.72 0.16 195;
+    --sidebar-primary-foreground: 0.08 0 0;
+    --sidebar-accent: 0.2 0.006 240;
+    --sidebar-accent-foreground: 0.8 0 0;
+    --sidebar-border: 0.22 0.008 240;
+    --sidebar-ring: 0.72 0.16 195;
+
+    /* Mode-specific accent colors (9 analysis modes) */
+    --mode-generic: 0.72 0.16 195;
+    --mode-plant: 0.68 0.18 140;
+    --mode-food: 0.72 0.16 30;
+    --mode-book: 0.65 0.16 270;
+    --mode-translation: 0.7 0.17 50;
+    --mode-art: 0.75 0.15 320;
+    --mode-receipt: 0.66 0.14 240;
+    --mode-medical: 0.62 0.2 10;
+    --mode-car: 0.68 0.16 170;
+
+    /* Status tokens */
+    --success: 0.68 0.18 140;
+    --warning: 0.72 0.16 30;
+    --info: 0.72 0.16 195;
+
+    /* Chip/filter states */
+    --chip-active-bg: 0.22 0.008 240;
+    --chip-active-border: 0.72 0.16 195;
+    --chip-inactive-bg: 0.16 0.005 240;
+    --chip-inactive-border: 0.25 0.008 240;
+
+    /* Collection card overlay */
+    --overlay-dark: 0.05 0.005 240;
+    --overlay-semi: 0.1 0.006 240;
+
+    /* Progress states */
+    --progress-bg: 0.18 0.008 240;
+    --progress-fill: 0.72 0.16 195;
+  }
+
+  /* Force dark mode only — no light variant */
+  html {
+    color-scheme: dark;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+}
+
+@font-face {
+  font-family: "Bricolage Grotesque";
+  src: url("/assets/fonts/BricolageGrotesque.woff2") format("woff2");
+  font-weight: 400 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "General Sans";
+  src: url("/assets/fonts/GeneralSans.woff2") format("woff2");
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  src: url("/assets/fonts/GeistMono.woff2") format("woff2");
+  font-weight: 400 500;
+  font-display: swap;
+}
+
+@layer utilities {
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .focus-ring {
+    @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-background;
+  }
+
+  /* Frosted glass card — core visual motif */
+  .glass-card {
+    @apply bg-card border border-border rounded-lg;
+    backdrop-filter: blur(12px);
+  }
+
+  /* Cyan glow border for active/focus */
+  .glow-border {
+    box-shadow: 0 0 0 1px oklch(0.72 0.16 195 / 0.4), 0 0 12px
+      oklch(0.72 0.16 195 / 0.15);
+  }
+
+  /* Scan-line overlay for image preview */
+  .scan-overlay::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      oklch(0.72 0.16 195 / 0.04) 2px,
+      oklch(0.72 0.16 195 / 0.04) 4px
+    );
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  /* Processing pulse — cyan fade in/out */
+  .scan-pulse {
+    animation: scan-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Scanning beam that sweeps top-to-bottom */
+  .scan-beam {
+    animation: scan-beam 2s ease-in-out infinite;
+  }
+
+  /* Confidence bar fill */
+  .confidence-fill {
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @keyframes scan-pulse {
+    0%,
+    100% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes scan-beam {
+    0% {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+  }
+
+  /* Entrance animations */
+  .animate-fade-in {
+    animation: fade-in 0.35s ease-out both;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.4s ease-out both;
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-up {
+    from {
+      transform: translateY(10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  /* Stagger helpers */
+  .stagger-1 {
+    animation-delay: 0.05s;
+  }
+  .stagger-2 {
+    animation-delay: 0.1s;
+  }
+  .stagger-3 {
+    animation-delay: 0.15s;
+  }
+  .stagger-4 {
+    animation-delay: 0.2s;
+  }
+  .stagger-5 {
+    animation-delay: 0.25s;
+  }
+
+  /* Analysis mode badges — 9 variants */
+  .mode-badge {
+    @apply inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-body font-medium transition-smooth;
+    background-color: oklch(var(--chip-inactive-bg));
+    border: 1px solid oklch(var(--chip-inactive-border));
+  }
+
+  .mode-badge.active {
+    border-color: oklch(var(--mode-generic));
+    background-color: oklch(var(--chip-active-bg));
+  }
+
+  .mode-badge-plant.active {
+    border-color: oklch(var(--mode-plant));
+  }
+
+  .mode-badge-food.active {
+    border-color: oklch(var(--mode-food));
+  }
+
+  .mode-badge-book.active {
+    border-color: oklch(var(--mode-book));
+  }
+
+  .mode-badge-translation.active {
+    border-color: oklch(var(--mode-translation));
+  }
+
+  .mode-badge-art.active {
+    border-color: oklch(var(--mode-art));
+  }
+
+  .mode-badge-receipt.active {
+    border-color: oklch(var(--mode-receipt));
+  }
+
+  .mode-badge-medical.active {
+    border-color: oklch(var(--mode-medical));
+  }
+
+  .mode-badge-car.active {
+    border-color: oklch(var(--mode-car));
+  }
+
+  /* Collection cards with thumbnail + overlay */
+  .collection-card {
+    @apply relative overflow-hidden rounded-md border border-border glass-card h-48 cursor-pointer;
+  }
+
+  .collection-card img {
+    @apply w-full h-full object-cover transition-smooth;
+  }
+
+  .collection-card:hover img {
+    @apply scale-105;
+  }
+
+  .collection-card-overlay {
+    @apply absolute inset-0 transition-smooth;
+    background: linear-gradient(
+      180deg,
+      oklch(var(--overlay-dark)) 0%,
+      oklch(var(--overlay-semi)) 100%
+    );
+  }
+
+  .collection-card-label {
+    @apply absolute bottom-0 left-0 right-0 p-3 text-foreground font-body text-sm font-medium truncate;
+  }
+
+  /* Comparison layout — two panels side by side */
+  .comparison-layout {
+    @apply grid grid-cols-2 gap-4 h-full;
+  }
+
+  .comparison-panel {
+    @apply glass-card p-4 overflow-y-auto;
+  }
+
+  .comparison-divider {
+    @apply absolute top-0 bottom-0 left-1/2 w-px;
+    background-color: oklch(var(--border));
+  }
+
+  /* Filter chips in history */
+  .filter-chip {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-body transition-smooth;
+    background-color: oklch(var(--chip-inactive-bg));
+    border: 1px solid oklch(var(--chip-inactive-border));
+    color: oklch(var(--muted-foreground));
+  }
+
+  .filter-chip.active {
+    background-color: oklch(var(--chip-active-bg));
+    border-color: oklch(var(--mode-generic));
+    color: oklch(var(--primary));
+  }
+
+  .filter-chip:hover {
+    border-color: oklch(var(--border) / 0.8);
+  }
+
+  /* History list density */
+  .history-list {
+    @apply space-y-2;
+  }
+
+  .history-item {
+    @apply glass-card p-3 flex items-center gap-3 cursor-pointer transition-smooth;
+  }
+
+  .history-item:hover {
+    background-color: oklch(var(--muted));
+  }
+
+  .history-item-thumbnail {
+    @apply w-12 h-12 rounded-sm object-cover flex-shrink-0;
+  }
+
+  .history-item-text {
+    @apply flex-1 min-w-0;
+  }
+
+  .history-item-title {
+    @apply text-sm font-body font-medium text-foreground truncate;
+  }
+
+  .history-item-time {
+    @apply text-xs font-mono text-muted-foreground;
+  }
+
+  /* PDF export progress state */
+  .progress-container {
+    @apply flex flex-col gap-2;
+  }
+
+  .progress-track {
+    @apply w-full h-2 rounded-full overflow-hidden;
+    background-color: oklch(var(--progress-bg));
+  }
+
+  .progress-fill {
+    @apply h-full rounded-full transition-smooth;
+    background-color: oklch(var(--progress-fill));
+  }
+
+  .progress-label {
+    @apply text-xs font-mono text-muted-foreground flex justify-between;
+  }
+
+  /* Shared scan badge — read-only indicator */
+  .shared-badge {
+    @apply inline-flex items-center gap-1 px-2 py-1 rounded-sm text-xs font-mono font-medium;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--primary));
+    border: 1px solid oklch(var(--primary) / 0.3);
+  }
+
+  .shared-badge-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Read-only shared scan view */
+  .shared-scan-container {
+    @apply glass-card p-6 max-w-2xl mx-auto;
+  }
+
+  .shared-scan-header {
+    @apply flex items-center justify-between mb-4;
+  }
+
+  .shared-scan-image {
+    @apply w-full rounded-md border border-border mb-6;
+    max-height: 480px;
+    object-fit: cover;
+  }
+
+  .shared-scan-results {
+    @apply space-y-4;
+  }
+
+  .shared-result-card {
+    @apply glass-card p-4;
+  }
+
+  /* Mode badge icon color helper */
+  .mode-icon {
+    @apply w-4 h-4 flex-shrink-0 transition-smooth;
+  }
+
+  .mode-badge-plant.active .mode-icon {
+    color: oklch(var(--mode-plant));
+  }
+
+  .mode-badge-food.active .mode-icon {
+    color: oklch(var(--mode-food));
+  }
+
+  .mode-badge-book.active .mode-icon {
+    color: oklch(var(--mode-book));
+  }
+
+  .mode-badge-translation.active .mode-icon {
+    color: oklch(var(--mode-translation));
+  }
+
+  .mode-badge-art.active .mode-icon {
+    color: oklch(var(--mode-art));
+  }
+
+  .mode-badge-receipt.active .mode-icon {
+    color: oklch(var(--mode-receipt));
+  }
+
+  .mode-badge-medical.active .mode-icon {
+    color: oklch(var(--mode-medical));
+  }
+
+  .mode-badge-car.active .mode-icon {
+    color: oklch(var(--mode-car));
+  }
+}
